@@ -43,7 +43,6 @@ class getSteamLibraryForCommunityId:
 		try:
 			response = urlopen(Request(url))
 			games_json = json.load(response)
-			print games_json
 			for i in games_json['response']['games']:
 				games.append(i['name'])
 		except URLError, e:
