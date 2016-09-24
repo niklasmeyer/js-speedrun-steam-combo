@@ -1,6 +1,9 @@
 import falcon
+from falcon_cors import CORS
 import json
 import mysql.connector
+
+cors = CORS(allow_all_origins=True)
 
 class getAllGames:
 	def on_get(self, req, resp):
@@ -26,5 +29,5 @@ class getAllGames:
 		resp.body = json.dumps(games)
 
  
-api = falcon.API()
+api = falcon.API(middleware=[cors.middleware])
 api.add_route('/games/', getAllGames())
