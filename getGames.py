@@ -30,10 +30,33 @@ class getSpeedrunGames:
 		resp.body = json.dumps(games)
 
 class getSpeedrunGameByName:
-	def on_get(self, req, resp):
-		game = ['wip']
-		resp.status = falcon.HTTP_200
-		resp.body = json.dumps(game)
+	def on_get(self, req, resp, name):
+		gameInfo = []
+
+                config = {
+                        'user': 'root',
+                        'password': 'root',
+                        'host': '127.0.0.1',
+                        'database': 'wcisr'
+                }
+                cnx = mysql.connector.connect(**config)
+                cursor = cnx.cursor(buffered=True)
+
+                getGameIdByName = """SELECT s_id FROM name_id_rel WHERE name = '{}'""".format(name)
+                cursor.execute(getGameIdByName)
+                cnx.commit()
+		for row in cursor:
+			gameId = row
+                cnx.close()
+
+		#speedrun api ansprechen mit der id
+		url = 'http://www.speedrun.com/api/v1/games/{}'.format(str(gameId[0]))
+		print url
+	        response = urlopen(Request(url))
+		game_json = json.load(response)
+
+                resp.status = falcon.HTTP_200
+                resp.body = json.dumps(game_json)
 
 class getSteamLibraryForCommunityId:
 	def on_get(self, req, resp, communityid):
